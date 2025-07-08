@@ -1,10 +1,11 @@
 import openai
 import csv
 import os
-import smtplib
 import urllib.parse
-from email.mime.text import MIMEText
+from email.utils import formataddr
 from datetime import datetime
+import requests
+import resend
 
 # Load recipients from users.csv
 with open('users.csv', 'r') as f:
@@ -22,10 +23,9 @@ response = client.chat.completions.create(
 )
 
 tweet = response.choices[0].message.content.strip()
-
 encoded = urllib.parse.quote(tweet)
 
-# Prepare HTML email
+# Email HTML content
 body = f"""
 <h3>💀 Hourly Dose of Dark Humor</h3>
 <p>{tweet}</p>
@@ -33,21 +33,26 @@ body = f"""
 """
 subject = f'Dark Tweet at {datetime.now().strftime("%I:%M %p")}'
 
-# SMTP config for Brevo
-smtp_server = "smtp-relay.brevo.com"
-smtp_port = 587
-smtp_user = 'manthanrgandhi@gmail.com'
-smtp_pass = os.environ['BREVO_API_KEY']
+# Resend config
+resend_api_key = os.environ["RESEND_EMAIL_KEY"]
+sender = "DarkTweetBot <onboarding@resend.dev>"
 
-# Send email to each recipient
+# Send email to each user using Resend API
 for name, email in users:
-    msg = MIMEText(body, 'html')
-    msg['Subject'] = subject
-    msg['From'] = f'DarkTweetMail <{smtp_user}>'
-    msg['To'] = email
+    data = {
+        "from": sender,
+        "to": [email],
+        "subject": subject,
+        "html": body
+    }
 
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()
-    server.login(smtp_user, smtp_pass)
-    server.sendmail(msg['From'], [email], msg.as_string())
-    server.quit()
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {resend_api_key}",
+            "Content-Type": "application/json"
+        },
+        json=data,
+    )
+
+    print(f"✅ Email sent to {email}: {response.status_code}")
