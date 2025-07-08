@@ -11,15 +11,18 @@ with open('users.csv', 'r') as f:
     users = list(csv.reader(f))[1:]  # Skip header
 
 # Generate tweet with OpenAI
-openai.api_key = os.environ['OPENAI_API_KEY']
-response = openai.ChatCompletion.create(
+client = openai.OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+
+response = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": "You are a sarcastic, dark humor writer."},
         {"role": "user", "content": "Write a dark humor tweet under 280 characters."}
     ]
 )
-tweet = response['choices'][0]['message']['content'].strip()
+
+tweet = response.choices[0].message.content.strip()
+
 encoded = urllib.parse.quote(tweet)
 
 # Prepare HTML email
