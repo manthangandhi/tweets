@@ -3,7 +3,7 @@ import csv
 import os
 import urllib.parse
 from email.utils import formataddr
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 
 # Load recipients from users.csv
@@ -17,7 +17,7 @@ client = openai.OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 tweets = []
 for _ in range(3):
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "Your task is to generate a single, short, witty, dark humor tweet about a random topic. The topic can be anything. The tweet must be under 140 characters. Do not use hashtags. Do not wrap the tweet in quotes."},
             {"role": "user", "content": "Write a dark humor tweet"}
@@ -72,7 +72,7 @@ body = f"""
 
           <tr>
             <td style="background-color: #111111; padding: 20px 40px; text-align: center; font-size: 12px; color: #666;">
-              <div style="margin-bottom: 6px;">{datetime.now().strftime("%I:%M %p")} — powered by <a href="https://resend.com" style="color:#888; text-decoration:none;">Resend</a> + <a href="https://openai.com" style="color:#888; text-decoration:none;">OpenAI</a></div>
+              <div style="margin-bottom: 6px;">{datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%MZ')} — powered by <a href="https://resend.com" style="color:#888; text-decoration:none;">Resend</a> + <a href="https://openai.com" style="color:#888; text-decoration:none;">OpenAI</a></div>
               <div style="color:#444; font-style: italic;">Because your humor deserves a black suit too.</div>
             </td>
           </tr>
@@ -85,7 +85,7 @@ body = f"""
 </body>
 </html>
 """
-subject = f'Dark Tweet at {datetime.now().strftime("%I:%M %p")}'
+subject = 'Your DarkTweetBot™ Drop'
 
 # Resend config
 resend_api_key = os.environ["RESEND_API_KEY"]
