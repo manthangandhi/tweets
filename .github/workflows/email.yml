@@ -24,4 +24,4 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-        run: python send_tweet.py
+        run: python sendTweet.py
