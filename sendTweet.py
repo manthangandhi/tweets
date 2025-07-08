@@ -33,7 +33,7 @@ body = f"""
 subject = f'Dark Tweet at {datetime.now().strftime("%I:%M %p")}'
 
 # Resend config
-resend_api_key = os.environ["RESEND_EMAIL_KEY"]
+resend_api_key = os.environ["RESEND_API_KEY"]
 sender = "DarkTweetBot <onboarding@resend.dev>"
 
 # Send email to each user using Resend API
