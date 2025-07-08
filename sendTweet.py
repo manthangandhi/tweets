@@ -38,7 +38,6 @@ smtp_server = "smtp-relay.brevo.com"
 smtp_port = 587
 smtp_user = os.environ['BREVO_EMAIL'] 
 smtp_pass = os.environ['BREVO_API_KEY']
-#smtp_pass = "jGd1khYvfPgVbC3r"
 
 # Send email to each recipient
 for name, email in users:
