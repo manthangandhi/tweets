@@ -37,8 +37,8 @@ subject = f'Dark Tweet at {datetime.now().strftime("%I:%M %p")}'
 smtp_server = "smtp-relay.brevo.com"
 smtp_port = 587
 smtp_user = "manthanrgandhi@gmail.com"  # Your Brevo login email
-#smtp_pass = os.environ['BREVO_API_KEY']
-smtp_pass = "jGd1khYvfPgVbC3r"
+smtp_pass = os.environ['BREVO_API_KEY']
+#smtp_pass = "jGd1khYvfPgVbC3r"
 
 # Send email to each recipient
 for name, email in users:
