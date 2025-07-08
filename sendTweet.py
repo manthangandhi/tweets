@@ -26,10 +26,6 @@ for _ in range(3):
     tweet = response.choices[0].message.content.strip().replace('"', '')
     tweets.append(tweet)
 
-
-
-encoded = urllib.parse.quote(tweets)
-
 tweet_blocks = ""
 for tweet in tweets:
     encoded = urllib.parse.quote(tweet)
