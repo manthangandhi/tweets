@@ -5,7 +5,6 @@ import urllib.parse
 from email.utils import formataddr
 from datetime import datetime
 import requests
-import resend
 
 # Load recipients from users.csv
 with open('users.csv', 'r') as f:
