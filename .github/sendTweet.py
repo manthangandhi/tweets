@@ -1,27 +1,28 @@
 import openai
 import csv
+import os
 import smtplib
 import urllib.parse
 from email.mime.text import MIMEText
 from datetime import datetime
 
-# Load users
+# Load recipients from users.csv
 with open('users.csv', 'r') as f:
-    lines = list(csv.reader(f))[1:]  # skip header
+    users = list(csv.reader(f))[1:]  # Skip header
 
-# Generate tweet
-openai.api_key = "YOUR_OPENAI_API_KEY"
+# Generate tweet with OpenAI
+openai.api_key = os.environ['OPENAI_API_KEY']
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are a sarcastic, witty, and dark humor writer."},
+        {"role": "system", "content": "You are a sarcastic, dark humor writer."},
         {"role": "user", "content": "Write a dark humor tweet under 280 characters."}
     ]
 )
 tweet = response['choices'][0]['message']['content'].strip()
 encoded = urllib.parse.quote(tweet)
 
-# Compose email
+# Prepare HTML email
 body = f"""
 <h3>💀 Hourly Dose of Dark Humor</h3>
 <p>{tweet}</p>
@@ -29,15 +30,21 @@ body = f"""
 """
 subject = f'Dark Tweet at {datetime.now().strftime("%I:%M %p")}'
 
-# Send to all users
-for name, email in lines:
+# SMTP config for Brevo
+smtp_server = "smtp-relay.brevo.com"
+smtp_port = 587
+smtp_user = "your_email@example.com"  # Your Brevo login email
+smtp_pass = os.environ['BREVO_API_KEY']
+
+# Send email to each recipient
+for name, email in users:
     msg = MIMEText(body, 'html')
     msg['Subject'] = subject
-    msg['From'] = 'DarkTweetMail <you@yourdomain.com>'
+    msg['From'] = f'DarkTweetMail <{smtp_user}>'
     msg['To'] = email
 
-    server = smtplib.SMTP("smtp.mailgun.org", 587)
+    server = smtplib.SMTP(smtp_server, smtp_port)
     server.starttls()
-    server.login("postmaster@yourdomain.com", "MAILGUN_API_KEY")
-    server.sendmail(msg['From'], [msg['To']], msg.as_string())
+    server.login(smtp_user, smtp_pass)
+    server.sendmail(msg['From'], [email], msg.as_string())
     server.quit()

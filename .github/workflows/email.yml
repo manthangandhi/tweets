@@ -2,26 +2,26 @@ name: Hourly Dark Tweet Emailer
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 * * * *'  # Every hour
   workflow_dispatch:
 
 jobs:
   send_email:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install openai
+      - name: Install dependencies
         run: pip install openai
 
       - name: Run tweet sender
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
-        run: |
-          python send_tweet.py
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: python send_tweet.py
