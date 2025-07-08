@@ -13,19 +13,43 @@ with open('users.csv', 'r') as f:
 # Generate tweet with OpenAI
 client = openai.OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
-response = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a sarcastic, dark humor writer."},
-        {"role": "user", "content": "Write a dark humor tweet under 280 characters."}
-    ]
-)
+# Generate 3 tweets
+tweets = []
+for _ in range(3):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a sarcastic, dark humor writer."},
+            {"role": "user", "content": "Write a dark humor tweet under 280 characters."}
+        ]
+    )
+    tweets.append(response.choices[0].message.content.strip())
 
-tweet = response.choices[0].message.content.strip()
-encoded = urllib.parse.quote(tweet)
+
+encoded = urllib.parse.quote(tweets)
+
+tweet_blocks = ""
+for tweet in tweets:
+    encoded = urllib.parse.quote(tweet)
+    tweet_blocks += f"""
+      <tr>
+        <td style="padding: 25px 40px 10px;">
+          <p style="font-size: 20px; line-height: 1.6; color: #dcdcdc; margin: 0;">{tweet}</p>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 10px 40px;">
+          <a href="https://twitter.com/intent/tweet?text={encoded}" target="_blank" style="background-color: #1da1f2; color: #fff; padding: 10px 24px; font-size: 14px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+            Tweet This
+          </a>
+        </td>
+      </tr>
+      <tr><td style="height: 1px; background-color: #222; margin: 20px 0;"></td></tr>
+    """
+
 
 # Email HTML content
-body = body = f"""
+body = f"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -40,32 +64,14 @@ body = body = f"""
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background-color:#181818; border-radius:10px; box-shadow: 0 0 20px rgba(0,0,0,0.4); overflow:hidden;">
 
-          <!-- BRAND HEADER (minimalistic) -->
           <tr>
             <td style="padding: 24px 40px 10px; text-align: right;">
               <span style="font-size: 12px; color: #555; letter-spacing: 1px;">DarkTweetBot™</span>
             </td>
           </tr>
 
-          <!-- TWEET BODY -->
-          <tr>
-            <td style="padding: 30px 40px 10px;">
-              <p style="font-size: 20px; line-height: 1.6; color: #dcdcdc; margin: 0;">
-                {tweet}
-              </p>
-            </td>
-          </tr>
+          {tweet_blocks}
 
-          <!-- CTA BUTTON -->
-          <tr>
-            <td align="center" style="padding: 30px 40px;">
-              <a href="https://twitter.com/intent/tweet?text={encoded}" target="_blank" style="background-color: #1da1f2; color: #fff; padding: 12px 28px; font-size: 15px; border-radius: 6px; text-decoration: none; font-weight: 600; letter-spacing: 0.5px;">
-                Tweet This
-              </a>
-            </td>
-          </tr>
-
-          <!-- FOOTER -->
           <tr>
             <td style="background-color: #111111; padding: 20px 40px; text-align: center; font-size: 12px; color: #666;">
               <div style="margin-bottom: 6px;">{datetime.now().strftime("%I:%M %p")} — powered by <a href="https://resend.com" style="color:#888; text-decoration:none;">Resend</a> + <a href="https://openai.com" style="color:#888; text-decoration:none;">OpenAI</a></div>
