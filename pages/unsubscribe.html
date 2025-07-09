@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unsubscribed – DarkTweetBot™</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .box {
+      max-width: 460px;
+      background: #111;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 15px;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>You've been unsubscribed.</h1>
+    <p>We get it. Not everyone's ready for a dose of darkness.</p>
+    <p>If this was a mistake, you can sign up again at <a href="/" style="color:#1da1f2">DarkTweetBot™</a>.</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+
+    if (email) {
+      fetch('https://your-project.supabase.co/rest/v1/subscribers?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH',
+        headers: {
+          'apikey': 'your-service-key',
+          'Authorization': 'Bearer your-service-key',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ is_subscribed: false })
+      }).then(res => {
+        console.log('Unsubscribed:', res.status);
+      });
+    }
+  </script>
+</body>
+</html>

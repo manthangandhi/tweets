@@ -1,27 +1,34 @@
-name: Send Dark Tweet Email
+name: Send Dark Tweets
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 9 AM IST
+    - cron: '0 9 * * 4'  # 9 AM UTC on Mon and Thu
   workflow_dispatch:
 
 jobs:
   send:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install requests openai
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run tweet sender
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: python sendTweet.py
+    - name: Send Tweets
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+        BASE_URL: ${{ secrets.BASE_URL }}
+      run: python sendTweet.py

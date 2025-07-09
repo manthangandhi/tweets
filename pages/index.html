@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkTweetBot™ – Join The Drop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0c0c0c;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .container {
+      max-width: 420px;
+      padding: 40px;
+      background-color: #111111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.6);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 15px;
+      color: #aaaaaa;
+      margin-bottom: 24px;
+    }
+    input[type=email] {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    button {
+      width: 100%;
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .msg {
+      font-size: 14px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DarkTweetBot™</h1>
+    <p>Subscribe to receive dark, sarcastic tweet drops. Twice a week. No BS.</p>
+    <input type="email" id="email" placeholder="you@example.com">
+    <button onclick="subscribe()">Join the Drop</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://your-project.supabase.co';
+    const SUPABASE_ANON_KEY = 'your-anon-key';
+
+    async function subscribe() {
+      const msg = document.getElementById('msg');
+      const email = document.getElementById('email').value.trim();
+
+      if (!email.includes('@')) {
+        msg.innerText = '❌ Please enter a valid email.';
+        return;
+      }
+
+      msg.innerText = '⏳ Subscribing...';
+
+      // Check if we're under 995 users
+      const countRes = await fetch(`${SUPABASE_URL}/rest/v1/subscribers?is_subscribed=eq.true&select=email`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+
+      const users = await countRes.json();
+      if (users.length >= 995) {
+        msg.innerText = '🚫 Sorry, signups are full. Try next drop.';
+        return;
+      }
+
+      // Subscribe user
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (res.ok) {
+        msg.innerText = '✅ You’re in! Check your inbox soon.';
+      } else {
+        msg.innerText = '⚠️ Something went wrong or email already exists.';
+      }
+    }
+  </script>
+</body>
+</html>
