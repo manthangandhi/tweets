@@ -55,8 +55,16 @@
         },
         body: JSON.stringify({ is_subscribed: false })
       }).then(res => {
-        console.log('Unsubscribed:', res.status);
+        if (res.ok) {
+          document.body.innerHTML = `<h2 style="color: #0f0;">You've been unsubscribed 😢</h2>`;
+        } else {
+          res.json().then(data => {
+            document.body.innerHTML = `<h2>Something went wrong</h2><pre style="color: red;">${JSON.stringify(data, null, 2)}</pre>`;
+          });
+        }
       });
+    } else {
+      document.body.innerHTML = `<h2 style="color: yellow;">Missing email address!</h2>`;
     }
   </script>
 </body>
