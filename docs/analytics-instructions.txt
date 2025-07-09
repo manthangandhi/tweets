@@ -1,0 +1,19 @@
+# Analytics Integration Instructions
+
+To add privacy-friendly analytics to your site, you can use services like Plausible or Fathom. Both are GDPR-compliant and do not track personal data.
+
+## Plausible
+1. Sign up at https://plausible.io/ and add your domain.
+2. Add the following script tag to the <head> of your HTML files:
+
+<script async defer data-domain="yourdomain.com" src="https://plausible.io/js/plausible.js"></script>
+
+## Fathom
+1. Sign up at https://usefathom.com/ and add your domain.
+2. Add the following script tag to the <head> of your HTML files:
+
+<script src="https://cdn.usefathom.com/script.js" data-site="YOUR_FATHOM_SITE_ID" defer></script>
+
+## Privacy Note
+- Both services are cookie-free and do not collect personal data.
+- Update your privacy policy to mention the analytics provider you use. 

@@ -37,5 +37,14 @@ All configuration is handled via environment variables:
 
 ---
 
+## Managing Sensitive Information
+- **Never** hardcode API keys or secrets in your code or HTML files.
+- Store all sensitive information in environment variables (e.g., in a `.env` file for local development).
+- For deployment, use your hosting provider's environment variable management.
+- Do not expose service keys or secrets in the frontend—only use public/anon keys where necessary.
+- Review your codebase before publishing to ensure no secrets are present.
+
+---
+
 ## License
 MIT
