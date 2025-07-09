@@ -3,68 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unsubscribed – DarkTweetBot™</title>
+  <title>Unsubscribed - DarkTweetBot™</title>
   <style>
     body {
-      background: #000;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
+      background-color: #0d0d0d;
+      color: #e6e6e6;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
       margin: 0;
-      text-align: center;
-      padding: 0 20px;
     }
-    .box {
-      max-width: 460px;
-      background: #111;
+    .container {
+      text-align: center;
+      max-width: 500px;
       padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.5);
+      background-color: #111;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
     }
     h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
+      font-size: 28px;
+      margin-bottom: 10px;
     }
     p {
+      font-size: 16px;
+      margin-bottom: 30px;
+      color: #999;
+    }
+    button {
+      padding: 12px 28px;
       font-size: 15px;
-      color: #bbb;
+      background-color: #1da1f2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #1990dc;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>You've been unsubscribed.</h1>
-    <p>We get it. Not everyone's ready for a dose of darkness.</p>
-    <p>If this was a mistake, you can sign up again at <a href="/" style="color:#1da1f2">DarkTweetBot™</a>.</p>
+  <div class="container">
+    <h1>You’re off the list 😔</h1>
+    <p>You’ve been unsubscribed from DarkTweetBot™.<br>Your inbox is now free from darkness... for now.</p>
+    <button onclick="resubscribe()">Resubscribe Me</button>
+    <div class="footer">
+      &copy; 2025 DarkTweetBot™<br>
+      Powered by Supabase + Resend
+    </div>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get('email');
+    const email = new URLSearchParams(window.location.search).get('email');
+    const supabaseUrl = 'https://uorgwaucygntcmaucfif.supabase.co';
+    const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmd3YXVjeWdudGNtYXVjZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDYxNzQsImV4cCI6MjA2NzU4MjE3NH0.kfwfoM8kx4mtdbod2MC-iNWSYWsiW5qJ6vGJHu1LBvc';
 
-    if (email) {
-      fetch('https://uorgwaucygntcmaucfif.supabase.co/rest/v1/subscribers?email=eq.' + encodeURIComponent(email), {
+    async function updateSubscription(status) {
+      const response = await fetch(`${supabaseUrl}/rest/v1/subscribers?email=eq.${encodeURIComponent(email)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmd3YXVjeWdudGNtYXVjZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDYxNzQsImV4cCI6MjA2NzU4MjE3NH0.kfwfoM8kx4mtdbod2MC-iNWSYWsiW5qJ6vGJHu1LBvc',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmd3YXVjeWdudGNtYXVjZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDYxNzQsImV4cCI6MjA2NzU4MjE3NH0.kfwfoM8kx4mtdbod2MC-iNWSYWsiW5qJ6vGJHu1LBvc',
+          'apikey': apiKey,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ is_subscribed: false })
-      }).then(res => {
-        if (res.ok) {
-          document.body.innerHTML = `<h2 style="color: #0f0;">You've been unsubscribed 😢</h2>`;
-        } else {
-          res.json().then(data => {
-            document.body.innerHTML = `<h2>Something went wrong</h2><pre style="color: red;">${JSON.stringify(data, null, 2)}</pre>`;
-          });
-        }
+        body: JSON.stringify({ is_subscribed: status })
       });
+
+      if (!response.ok) {
+        alert('Something went wrong. Please try again.');
+      }
+    }
+
+    async function resubscribe() {
+      await updateSubscription(true);
+      document.querySelector('h1').innerText = "You're back 🖤";
+      document.querySelector('p').innerHTML = "You've been resubscribed to DarkTweetBot™. Prepare for the shadows.";
+    }
+
+    if (email) {
+      updateSubscription(false);
     } else {
-      document.body.innerHTML = `<h2 style="color: yellow;">Missing email address!</h2>`;
+      document.querySelector('p').innerText = 'Email not found in request.';
     }
   </script>
 </body>
