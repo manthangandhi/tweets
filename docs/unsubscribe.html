@@ -75,7 +75,7 @@
           'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ is_subscribed: false })
+        body: JSON.stringify([{ is_subscribed: false }])
       });
 
       if (res.ok) {
@@ -94,7 +94,7 @@
           'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ is_subscribed: true })
+        body: JSON.stringify([{ is_subscribed: true }])
       });
 
       if (res.ok) {
