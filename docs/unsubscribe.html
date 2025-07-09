@@ -83,7 +83,7 @@
         alert("Email not found.");
         return;
       }
-      const uuid = users[0].uuid;
+      const uuid = users[0].id;
 
       // 2. Patch by uuid
       const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/subscribers?uuid=eq.${uuid}` , {
