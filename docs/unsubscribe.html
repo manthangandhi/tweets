@@ -46,11 +46,11 @@
     const email = params.get('email');
 
     if (email) {
-      fetch('https://your-project.supabase.co/rest/v1/subscribers?email=eq.' + encodeURIComponent(email), {
+      fetch('https://darkHumorTweet.supabase.co/rest/v1/subscribers?email=eq.' + encodeURIComponent(email), {
         method: 'PATCH',
         headers: {
-          'apikey': 'your-service-key',
-          'Authorization': 'Bearer your-service-key',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmd3YXVjeWdudGNtYXVjZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDYxNzQsImV4cCI6MjA2NzU4MjE3NH0.kfwfoM8kx4mtdbod2MC-iNWSYWsiW5qJ6vGJHu1LBvc',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmd3YXVjeWdudGNtYXVjZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDYxNzQsImV4cCI6MjA2NzU4MjE3NH0.kfwfoM8kx4mtdbod2MC-iNWSYWsiW5qJ6vGJHu1LBvc',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ is_subscribed: false })
