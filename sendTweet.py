@@ -2,6 +2,7 @@ import openai
 import os
 import requests
 from datetime import datetime, timezone
+from openai import OpenAI
 from email.utils import formataddr
 import urllib.parse
 
@@ -29,18 +30,18 @@ if not users:
     exit(0)
 
 # 2. Generate 3 tweets
-openai.api_key = OPENAI_API_KEY
 
-prompt = {
-    "model": "gpt-4o-mini",
-    "messages": [
+client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
         {"role": "system", "content": "Your task is to generate a single, short, witty, dark humor tweet about a random topic in indian context. The topic can be anything. The tweet must be under 140 characters. Do not use hashtags. Do not wrap the tweet in quotes."},
         {"role": "user", "content": "Write a dark humor tweet"}
     ]
-}
-
-response = openai.ChatCompletion.create(**prompt)
+)
 content = response.choices[0].message.content.strip()
+
 tweets = [line[3:].strip() for line in content.splitlines() if line.strip().startswith("1.") or line.strip().startswith("2.") or line.strip().startswith("3.")]
 
 # 3. Build email HTML
