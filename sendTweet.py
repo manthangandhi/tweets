@@ -36,13 +36,17 @@ client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
-        {"role": "system", "content": "Your task is to generate a single, short, witty, dark humor tweet about a random topic in indian context. The topic can be anything. The tweet must be under 140 characters. Do not use hashtags. Do not wrap the tweet in quotes."},
-        {"role": "user", "content": "Write a dark humor tweet"}
+        {"role": "system", "content": "You are a dark humor writer who writes short, sarcastic, witty tweets under 140 characters in Indian context. Don't add hashtags or wrap in quotes."},
+        {"role": "user", "content": "Write 3 dark humor tweets, each starting with '1.', '2.', and '3.'."}
     ]
 )
 content = response.choices[0].message.content.strip()
 
-tweets = [line[3:].strip() for line in content.splitlines() if line.strip().startswith("1.") or line.strip().startswith("2.") or line.strip().startswith("3.")]
+tweets = [
+    line.split('.', 1)[1].strip()
+    for line in content.splitlines()
+    if line.strip().startswith(('1.', '2.', '3.'))
+]
 
 # 3. Build email HTML
 body_blocks = ""
