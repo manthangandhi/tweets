@@ -62,7 +62,7 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const email = urlParams.get('email');
+    const email = urlParams.get('email')?.trim();
 
     const SUPABASE_URL = 'https://uorgwaucygntcmaucfif.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmd3YXVjeWdudGNtYXVjZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDYxNzQsImV4cCI6MjA2NzU4MjE3NH0.kfwfoM8kx4mtdbod2MC-iNWSYWsiW5qJ6vGJHu1LBvc';
