@@ -9,10 +9,22 @@
   <!-- jsPDF CDN for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <meta name="description" content="Generate sarcastic greeting cards with AI. Dark, snarky, and passive-aggressive tones for any occasion!" />
+  <link rel="icon" href="/tweets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/tweets/apple-touch-icon.png">
+  <meta property="og:title" content="Sarcastic Greeting Card Generator">
+  <meta property="og:description" content="Generate sarcastic greeting cards with AI. Dark, snarky, and passive-aggressive tones for any occasion!">
+  <meta property="og:image" content="/tweets/og-image.png">
+  <meta property="og:url" content="/tweets/sarcastic-greeting-card.html">
 </head>
 <body class="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen flex items-center justify-center p-4">
   <main class="w-full max-w-lg bg-white/10 backdrop-blur rounded-2xl shadow-xl p-8">
-    <h1 class="text-3xl font-extrabold text-center text-gray-100 mb-6">Sarcastic Greeting Card Generator</h1>
+    <div class="text-center mb-6">
+      <a href="/tweets/" class="text-yellow-400 hover:text-yellow-300 text-sm font-medium mb-4 inline-block">
+        ← Back to Home
+      </a>
+      <h1 class="text-3xl font-extrabold text-gray-100">Sarcastic Greeting Card Generator</h1>
+    </div>
+    
     <form id="cardForm" class="space-y-4" aria-label="Greeting Card Generator Form">
       <div>
         <label for="occasion" class="block text-gray-200 font-medium mb-1">Occasion</label>
