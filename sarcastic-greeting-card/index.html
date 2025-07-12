@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sarcastic Greeting Card Generator</title>
+  <!-- Tailwind CSS CDN for minimal, modern styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- jsPDF CDN for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta name="description" content="Generate sarcastic greeting cards with AI. Dark, snarky, and passive-aggressive tones for any occasion!" />
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen flex items-center justify-center p-4">
+  <main class="w-full max-w-lg bg-white/10 backdrop-blur rounded-2xl shadow-xl p-8">
+    <h1 class="text-3xl font-extrabold text-center text-gray-100 mb-6">Sarcastic Greeting Card Generator</h1>
+    <form id="cardForm" class="space-y-4" aria-label="Greeting Card Generator Form">
+      <div>
+        <label for="occasion" class="block text-gray-200 font-medium mb-1">Occasion</label>
+        <select id="occasion" name="occasion" class="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" required>
+          <option value="Birthday">Birthday</option>
+          <option value="Breakup">Breakup</option>
+          <option value="Congratulations">Congratulations</option>
+          <option value="Apology">Apology</option>
+          <option value="Promotion">Promotion</option>
+          <option value="Retirement">Retirement</option>
+        </select>
+      </div>
+      <div>
+        <label for="tone" class="block text-gray-200 font-medium mb-1">Tone</label>
+        <select id="tone" name="tone" class="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" required>
+          <option value="Dark">Dark</option>
+          <option value="Snarky">Snarky</option>
+          <option value="Passive-Aggressive">Passive-Aggressive</option>
+        </select>
+      </div>
+      <div>
+        <label for="recipient" class="block text-gray-200 font-medium mb-1">Recipient Name</label>
+        <input type="text" id="recipient" name="recipient" class="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="e.g. Alex" required aria-required="true" />
+      </div>
+      <button type="submit" class="w-full py-3 bg-yellow-400 text-gray-900 font-bold rounded-lg shadow hover:bg-yellow-300 transition">Generate</button>
+    </form>
+    <section id="resultSection" class="mt-8 hidden" aria-live="polite">
+      <div id="cardMessage" class="opacity-0 transition-opacity duration-700 text-lg text-center text-gray-100 font-semibold mb-4"></div>
+      <button id="downloadBtn" class="hidden w-full py-2 bg-gray-900 text-yellow-400 font-bold rounded-lg shadow hover:bg-gray-800 transition">Download as PDF</button>
+    </section>
+    <div id="errorMsg" class="mt-4 text-red-400 text-center text-sm" role="alert" style="display:none;"></div>
+  </main>
+  <script>
+    // Placeholder for your OpenAI API key
+    const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE";
+
+    // Form and UI elements
+    const form = document.getElementById('cardForm');
+    const resultSection = document.getElementById('resultSection');
+    const cardMessage = document.getElementById('cardMessage');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Accessibility: focus management
+    function focusResult() {
+      cardMessage.setAttribute('tabindex', '-1');
+      cardMessage.focus();
+      setTimeout(() => cardMessage.removeAttribute('tabindex'), 1000);
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+      cardMessage.textContent = '';
+      cardMessage.classList.remove('opacity-100');
+      resultSection.classList.add('hidden');
+      downloadBtn.classList.add('hidden');
+
+      const occasion = form.occasion.value;
+      const tone = form.tone.value;
+      const recipient = form.recipient.value.trim();
+
+      // Show loading state
+      cardMessage.textContent = 'Generating your card...';
+      cardMessage.classList.remove('opacity-0');
+      cardMessage.classList.add('opacity-100');
+      resultSection.classList.remove('hidden');
+
+      // Build OpenAI prompt
+      const prompt = `Write a sarcastic greeting card for the following:\nOccasion: ${occasion}\nTone: ${tone}\nRecipient: ${recipient}\nKeep it short, witty, and in the selected tone. Do not use hashtags or emojis.`;
+
+      try {
+        // Call OpenAI API
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [
+              { role: 'system', content: 'You are a master of sarcasm and dark humor. Generate witty, short, and sarcastic greeting card messages.' },
+              { role: 'user', content: prompt }
+            ],
+            max_tokens: 80,
+            temperature: 0.9
+          })
+        });
+        if (!response.ok) throw new Error('OpenAI API error');
+        const data = await response.json();
+        const message = data.choices[0].message.content.trim();
+
+        // Animate and show result
+        cardMessage.textContent = message;
+        cardMessage.classList.remove('opacity-0');
+        cardMessage.classList.add('opacity-100');
+        resultSection.classList.remove('hidden');
+        downloadBtn.classList.remove('hidden');
+        focusResult();
+      } catch (err) {
+        cardMessage.textContent = '';
+        errorMsg.textContent = 'Failed to generate card. Please check your API key or try again later.';
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    // Download as PDF using jsPDF
+    downloadBtn.addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a5' });
+      // Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.text('Your Daily Dose of Darkness', 40, 60);
+      // Message box
+      doc.setDrawColor('#bfa14a');
+      doc.setLineWidth(2);
+      doc.roundedRect(36, 80, 500, 120, 12, 12, 'S');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(16);
+      doc.text(cardMessage.textContent, 56, 110, { maxWidth: 460 });
+      // Footer
+      doc.setFontSize(12);
+      doc.setTextColor('#bfa14a');
+      doc.text('Generated by DarkHumor.fun', 40, 220);
+      doc.save('sarcastic-greeting-card.pdf');
+    });
+  </script>
+</body>
+</html> 
